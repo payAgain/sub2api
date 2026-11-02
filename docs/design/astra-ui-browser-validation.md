@@ -11,7 +11,9 @@
 - 689 项原有相关测试报告：全部通过，0 失败。父代理最后补跑模型广场与刷新回归 57 项：全部通过。
 - 修改后组件 ESLint、`git diff --check` 通过。
 - 最终生产前端构建通过，输出至 `backend/internal/web/dist`；Linux amd64 嵌入构建通过，版本 `0.2.19-yiming.4`。
-- 独立代码复核已完成，未发现可确认的高／中优先级问题；部署脚本与二进制已预备，发布状态以服务器 `astra-ui-v4/deployment.json` 为准，准备完成不等于已经上线。
+- 独立代码复核已完成，未发现可确认的高／中优先级问题。新版镜像 `yiming/sub2api:0.2.19-yiming.4` 已发布，服务器 `/opt/sub2api-custom/astra-ui-v4/deployment.json` 已读回；容器运行正常，公网健康检查与管理员认证读取通过。
+- 公网 HTML 引用的 6 项入口 JS/CSS 与本地最终构建逐字节一致，验证报告为 `~/.local/share/hermes-integrations/sub2api-migration/astra-ui-public-verification.json`；公网 `/login` 已用 bsk 在 440px 手机上实际渲染检查。
+- 发布后再次读回全部价格规则，并与变更前受保护数据库快照比较 `accounts`、`account_groups`、`proxies`，均一致。镜像 `.3`、Compose 和数据库发布前备份保留以供回退。
 
 截图证据保存在本机：`~/.local/share/hermes-integrations/sub2api-migration/astra-ui-evidence/`。
 
