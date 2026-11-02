@@ -33,9 +33,8 @@ type PlazaModel struct {
 
 // PlazaGroup 模型广场中以分组为顶层的条目。
 //
-// 与 AvailableGroupRef 相比多了 Description 与 Models；Models 来自该分组关联渠道的
-// 支持模型（普通分组按分组平台隔离，Composite 分组展开关联渠道已配置的
-// 具体平台），与「可用渠道」页口径一致。
+// 与 AvailableGroupRef 相比多了 Description 与 Models；Models 来自活跃账号
+// 当前分组的显式公开模型键，普通分组隔离平台，Composite 分组保留具体平台。
 type PlazaGroup struct {
 	ID                 int64
 	Name               string
@@ -63,9 +62,10 @@ type PlazaGroup struct {
 
 // ModelPlazaService 聚合模型广场数据。
 //
-// 模型枚举来自渠道配置；token 模型的展示单价与阶梯由 BillingService 的阶梯表
+// 模型枚举来自活跃账号配置；token 模型的展示单价与阶梯由 BillingService 的阶梯表
 // 查询给出（与扣费走同一条解析链与计费函数），图片/按次模型沿用渠道/分组档位价。
 type ModelPlazaService struct {
+	accountRepo    AccountRepository
 	channelRepo    ChannelRepository
 	groupRepo      GroupRepository
 	pricingService *PricingService
@@ -80,8 +80,10 @@ func NewModelPlazaService(
 	pricingService *PricingService,
 	billingService *BillingService,
 	resolver *ModelPricingResolver,
+	accountRepo AccountRepository,
 ) *ModelPlazaService {
 	return &ModelPlazaService{
+		accountRepo:    accountRepo,
 		channelRepo:    channelRepo,
 		groupRepo:      groupRepo,
 		pricingService: pricingService,
@@ -92,8 +94,9 @@ func NewModelPlazaService(
 
 // ListGroups 返回模型广场数据：每个活跃分组附带其可用模型与定价。
 //
-// 模型枚举口径与 ListAvailable 一致（Active 渠道、SupportedModels ∪ 全局定价回落、
-// 平台隔离），仅把顶层从渠道换成分组：
+// 每次请求读取当前活跃账号的显式 model_mapping，不使用调度缓存或平台默认模型。
+// 生产环境必须注入 accountRepo；nil 仅保留历史渠道测试的兼容路径。
+// 空账号或空映射不会回落到渠道模型。渠道仍提供定价：
 //   - 渠道按 lower(name) 排序后遍历，保证同名模型去重结果确定；
 //   - 同分组同名模型「先见者胜」，仅当已存条目无定价而新条目有定价时升级替换；
 //   - token 模型的单价与阶梯按实收口径合成（见 ResolveContextPricingSchedule），
@@ -114,7 +117,10 @@ func (s *ModelPlazaService) ListGroups(ctx context.Context) ([]PlazaGroup, error
 	}
 
 	sort.SliceStable(channels, func(i, j int) bool {
-		return strings.ToLower(channels[i].Name) < strings.ToLower(channels[j].Name)
+		if strings.ToLower(channels[i].Name) != strings.ToLower(channels[j].Name) {
+			return strings.ToLower(channels[i].Name) < strings.ToLower(channels[j].Name)
+		}
+		return channels[i].ID < channels[j].ID
 	})
 
 	byGroup := make(map[int64]*PlazaGroup, len(groups))
@@ -151,48 +157,125 @@ func (s *ModelPlazaService) ListGroups(ctx context.Context) ([]PlazaGroup, error
 	}
 	// modelIdx[groupID][platform+modelName] = index into byGroup[groupID].Models
 	modelIdx := make(map[int64]map[modelKey]int, len(groups))
-	for i := range channels {
-		ch := &channels[i]
-		if ch.Status != StatusActive {
-			continue
-		}
-		ch.normalizeBillingModelSource()
-		supported := ch.SupportedModels()
-		fillGlobalPricingFallback(s.pricingService, supported)
-
-		for _, gid := range ch.GroupIDs {
-			pg, ok := byGroup[gid]
-			if !ok {
+	if s.accountRepo == nil {
+		for i := range channels {
+			ch := &channels[i]
+			if ch.Status != StatusActive {
 				continue
 			}
-			idx := modelIdx[gid]
-			if idx == nil {
-				idx = make(map[modelKey]int, len(supported))
-				modelIdx[gid] = idx
-			}
-			for j := range supported {
-				m := supported[j]
-				if pg.Platform == PlatformComposite {
-					if !isConcreteRequestPlatform(m.Platform) {
+			ch.normalizeBillingModelSource()
+			supported := ch.SupportedModels()
+			fillGlobalPricingFallback(s.pricingService, supported)
+
+			for _, gid := range ch.GroupIDs {
+				pg, ok := byGroup[gid]
+				if !ok {
+					continue
+				}
+				idx := modelIdx[gid]
+				if idx == nil {
+					idx = make(map[modelKey]int, len(supported))
+					modelIdx[gid] = idx
+				}
+				for j := range supported {
+					m := supported[j]
+					if pg.Platform == PlatformComposite {
+						if !isConcreteRequestPlatform(m.Platform) {
+							continue
+						}
+					} else if m.Platform != pg.Platform {
 						continue
 					}
-				} else if m.Platform != pg.Platform {
-					continue
-				}
-				key := modelKey{platform: m.Platform, name: m.Name}
-				if at, seen := idx[key]; seen {
-					// 先见者胜；仅当已存条目无定价而新条目有定价时升级。
-					if pg.Models[at].Pricing == nil && m.Pricing != nil {
-						pg.Models[at].Pricing = m.Pricing
+					key := modelKey{platform: m.Platform, name: m.Name}
+					if at, seen := idx[key]; seen {
+						// 先见者胜；仅当已存条目无定价而新条目有定价时升级。
+						if pg.Models[at].Pricing == nil && m.Pricing != nil {
+							pg.Models[at].Pricing = m.Pricing
+						}
+						continue
 					}
+					idx[key] = len(pg.Models)
+					pg.Models = append(pg.Models, PlazaModel{
+						Name:     m.Name,
+						Platform: m.Platform,
+						Pricing:  m.Pricing,
+					})
+				}
+			}
+		}
+
+	} else {
+		accounts, err := s.accountRepo.ListActive(ctx)
+		if err != nil {
+			return nil, fmt.Errorf("list active accounts: %w", err)
+		}
+		// Cache channel pricing projections once; they never add catalog members.
+		channelModels := make([][]SupportedModel, len(channels))
+		for i := range channels {
+			if channels[i].Status == StatusActive {
+				channels[i].normalizeBillingModelSource()
+				channelModels[i] = channels[i].SupportedModels()
+			}
+		}
+		for _, account := range accounts {
+			if account.Status != StatusActive || !isConcreteRequestPlatform(account.Platform) {
+				continue
+			}
+			// GetModelMapping adds defaults; catalog only explicit public keys.
+			raw, _ := account.Credentials["model_mapping"].(map[string]any)
+			aliasedTargets := make(map[string]bool)
+			for name, value := range raw {
+				if target, ok := value.(string); ok && name != target && strings.TrimSpace(name) != "" && !strings.Contains(name, "*") {
+					aliasedTargets[target] = true
+				}
+			}
+			for name, value := range raw {
+				target, ok := value.(string)
+				if !ok || strings.TrimSpace(name) == "" || strings.Contains(name, "*") || (name == target && aliasedTargets[name]) {
 					continue
 				}
-				idx[key] = len(pg.Models)
-				pg.Models = append(pg.Models, PlazaModel{
-					Name:     m.Name,
-					Platform: m.Platform,
-					Pricing:  m.Pricing,
-				})
+				for _, gid := range account.GroupIDs {
+					pg := byGroup[gid]
+					if pg == nil || (pg.Platform != PlatformComposite && pg.Platform != account.Platform) {
+						continue
+					}
+					key := modelKey{platform: account.Platform, name: name}
+					if modelIdx[gid] == nil {
+						modelIdx[gid] = make(map[modelKey]int)
+					}
+					if _, seen := modelIdx[gid][key]; seen {
+						continue
+					}
+					var pricing *ChannelModelPricing
+					for i := range channels {
+						ch := &channels[i]
+						if ch.Status != StatusActive {
+							continue
+						}
+						for _, channelGroup := range ch.GroupIDs {
+							if channelGroup == gid {
+								// Preserve channel mapping -> target pricing resolution.
+								for _, model := range channelModels[i] {
+									if model.Platform == account.Platform && model.Name == name {
+										pricing = model.Pricing
+										break
+									}
+								}
+								if pricing == nil {
+									pricing = ch.GetModelPricingByPlatform(account.Platform, name)
+								}
+								break
+							}
+						}
+						if pricing != nil {
+							break
+						}
+					}
+					priced := []SupportedModel{{Name: name, Platform: account.Platform, Pricing: pricing}}
+					fillGlobalPricingFallback(s.pricingService, priced)
+					modelIdx[gid][key] = len(pg.Models)
+					pg.Models = append(pg.Models, PlazaModel{Name: name, Platform: account.Platform, Pricing: priced[0].Pricing})
+				}
 			}
 		}
 	}
