@@ -40,24 +40,22 @@ export default {
           200: '#e4e4e7',
           300: '#d4d4d8',
           400: '#a1a1aa',
-          500: '#97a1a3',
-          600: '#565e60',
-          700: '#34383a',
-          800: '#232628',
-          900: '#1b1d1f',
-          950: '#141617'
+          500: '#9ca3b1',
+          600: '#555c6a',
+          700: '#30323a',
+          800: '#22252c',
+          900: '#191b20',
+          950: '#101114'
         }
       },
       fontFamily: {
         sans: [
+          'Arial',
           '-apple-system',
           'BlinkMacSystemFont',
-          'PingFang SC',
-          'Microsoft YaHei',
           'Segoe UI',
-          'Roboto',
-          'Helvetica Neue',
-          'Arial',
+          'Microsoft YaHei',
+          'PingFang SC',
           'Hiragino Sans GB',
           'sans-serif'
         ],

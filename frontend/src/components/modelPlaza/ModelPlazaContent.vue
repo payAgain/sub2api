@@ -32,7 +32,7 @@
           </div>
           <select v-model="selectedFamily" aria-label="模型系列" class="family-select">
             <option value="all">全部模型系列</option>
-            <option v-for="family in families" :key="family" :value="family">{{ family }}</option>
+            <option v-for="family in families" :key="family" :value="family">{{ family === '其他' ? '未分类系列' : family }}</option>
           </select>
           <div class="view-switch" role="group" aria-label="显示方式">
             <button type="button" aria-label="卡片视图" :aria-pressed="view === 'cards'" class="view-button" :class="{ selected: view === 'cards' }" @click="view = 'cards'">
@@ -52,12 +52,11 @@
       <div v-if="entries.length && view === 'cards'" class="catalog-grid">
         <article v-for="entry in entries" :key="entry.key" data-model-card class="model-card">
           <div class="model-card-top">
-            <span class="family-badge">{{ entry.family }}</span>
-            <span class="billing-label">{{ entry.price.token ? 'Token 计费' : entry.price.unit.replace('USD / ', '按') + '计费' }}</span>
-          </div>
-          <div class="model-identity">
-            <h2>{{ entry.model.name }}</h2>
-            <p>{{ entry.group.name }}</p>
+            <span class="model-glyph" aria-hidden="true"><Icon name="cube" size="md" /></span>
+            <div class="model-identity">
+              <h2>{{ entry.model.name }}</h2>
+              <p><span>{{ entry.group.name }}</span><span v-if="entry.family !== '其他'" class="family-badge" title="系列仅依据模型 ID 识别">{{ entry.family }}</span></p>
+            </div>
           </div>
           <dl class="price-columns">
             <div>
@@ -69,7 +68,7 @@
               <dd class="price-value" :class="{ 'price-compact': entry.price.output.length > 9 }">{{ entry.price.output }}</dd>
             </div>
           </dl>
-          <div class="price-unit"><span>{{ entry.price.unit }}</span><span v-if="entry.price.tiered" class="tier-badge">基础档 · 阶梯定价</span></div>
+          <div class="price-unit"><span>{{ entry.price.unit }}</span><span class="billing-label">{{ entry.price.token ? 'Token 计费' : entry.price.unit.replace('USD / ', '按') + '计费' }}</span><span v-if="entry.price.tiered" class="tier-badge">基础档 · 阶梯定价</span></div>
           <div class="model-card-actions">
             <button type="button" class="copy-button" :aria-label="`复制 ${entry.model.name} 的模型 ID`" @click="copyToClipboard(entry.model.name)"><Icon name="copy" size="sm" />复制 ID</button>
             <button type="button" data-details class="details-button" @click="selected = entry">价格详情 <span aria-hidden="true">↗</span></button>
@@ -80,7 +79,7 @@
         <table class="catalog-table">
           <thead><tr><th scope="col">模型 ID / 系列</th><th scope="col">分组</th><th scope="col" class="text-right">输入 / 单价</th><th scope="col" class="text-right">输出</th><th scope="col">单位</th><th scope="col">操作</th></tr></thead>
           <tbody><tr v-for="entry in entries" :key="entry.key">
-            <td class="table-identity"><p>{{ entry.model.name }}</p><span class="family-badge">{{ entry.family }}</span></td>
+            <td class="table-identity"><p>{{ entry.model.name }}</p><span v-if="entry.family !== '其他'" class="family-badge" title="系列仅依据模型 ID 识别">{{ entry.family }}</span></td>
             <td>{{ entry.group.name }}</td><td class="table-price">{{ entry.price.input }}</td><td class="table-price">{{ entry.price.output ?? '—' }}</td><td class="table-unit">{{ entry.price.unit }}<p v-if="entry.price.tiered">基础档 · 阶梯定价</p></td>
             <td><div class="table-actions"><button type="button" class="copy-button" :aria-label="`复制 ${entry.model.name} 的模型 ID`" @click="copyToClipboard(entry.model.name)"><Icon name="copy" size="sm" />复制 ID</button><button type="button" data-details class="details-button" @click="selected = entry">详情 <span aria-hidden="true">↗</span></button></div></td>
           </tr></tbody>
@@ -95,7 +94,7 @@
     </template>
     <BaseDialog :show="selected !== null" title="模型价格详情" width="extra-wide" @close="selected = null">
       <div v-if="selected" class="catalog-detail">
-        <div class="detail-identity"><div><span class="family-badge">{{ selected.family }}</span><p class="detail-model-id">{{ selected.model.name }}</p><p class="detail-family-note">系列仅依据模型 ID 识别</p></div><button type="button" class="copy-button" :aria-label="`复制 ${selected.model.name} 的模型 ID`" @click="copyToClipboard(selected.model.name)"><Icon name="copy" size="sm" />复制 ID</button></div>
+        <div class="detail-identity"><div><span v-if="selected.family !== '其他'" class="family-badge">{{ selected.family }}</span><p class="detail-model-id">{{ selected.model.name }}</p><p v-if="selected.family !== '其他'" class="detail-family-note">系列仅依据模型 ID 识别</p></div><button type="button" class="copy-button" :aria-label="`复制 ${selected.model.name} 的模型 ID`" @click="copyToClipboard(selected.model.name)"><Icon name="copy" size="sm" />复制 ID</button></div>
         <p class="detail-note">Token 价格单位为 USD / 1M tokens；按次、图片等价格保留各自单位。下表展示分组倍率、缓存、阶梯与分时时段；高峰规则以分组说明为准。</p>
         <p class="detail-scroll-hint text-xs text-gray-500 sm:hidden">左右滑动下表查看完整价格</p>
         <PlazaGroupSection :group="{ ...selected.group, models: [selected.model] }" />
@@ -160,83 +159,91 @@ const descriptionHtml = computed(() => {
   --catalog-text: var(--text-primary);
   --catalog-muted: var(--text-muted);
   color: var(--catalog-text);
+  font-family: var(--font-ui);
 }
-.model-catalog { display: flex; min-width: 0; flex-direction: column; gap: 20px; }
-.catalog-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; padding: 8px 0 12px; }
-.catalog-header h1 { font-size: 30px; font-weight: 600; line-height: 1.3; letter-spacing: -.035em; }
-.catalog-intro { margin-top: 10px; font-size: 14px; color: var(--catalog-muted); line-height: 1.7; }
+.model-catalog { display: flex; min-width: 0; flex-direction: column; gap: 16px; }
+.catalog-header { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 0; }
+.catalog-header h1 { font-size: 24px; font-weight: 600; line-height: 1.4; }
+.catalog-intro { margin-top: 4px; font-size: 14px; color: var(--catalog-muted); line-height: 1.6; }
 .catalog-guide { padding: 0 0 4px 24px; border-left: 1px solid var(--catalog-border); }
 .catalog-guide p { font-size: 14px; font-weight: 500; color: var(--catalog-text); }
 .catalog-guide span { display: block; margin-top: 5px; font-size: 12px; color: var(--catalog-muted); }
 .catalog-hint { font-size: 13px; color: var(--catalog-muted); }
 .catalog-controls { min-width: 0; }
 .category-tabs { display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 24px; border-bottom: 1px solid var(--catalog-border); }
-.filter-button { display: inline-flex; flex-shrink: 0; align-items: center; gap: 8px; min-height: 48px; padding: 10px 0; border-bottom: 2px solid transparent; color: var(--catalog-muted); font-size: 14px; font-weight: 500; transition: color .15s, border-color .15s; }
+.filter-button { display: inline-flex; flex-shrink: 0; align-items: center; gap: 8px; min-height: 40px; padding: 8px 0; border-bottom: 2px solid transparent; color: var(--catalog-muted); font-size: 14px; font-weight: 500; transition: color .15s, border-color .15s; }
 .filter-button span { font-size: 12px; font-weight: 400; font-variant-numeric: tabular-nums; }
 .filter-button:hover, .filter-button.active { color: var(--catalog-accent); }
 .filter-button.active { border-color: var(--catalog-accent); }
 .filter-button.active span { color: var(--catalog-accent); }
-.catalog-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 20px; }
+.catalog-toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 12px; }
 .catalog-search { position: relative; flex: 1; min-width: 180px; max-width: 460px; }
 .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--catalog-muted); pointer-events: none; }
-.catalog-search input, .family-select { min-width: 0; height: 40px; border: 1px solid var(--catalog-border); border-radius: 6px; background: var(--catalog-surface); color: var(--catalog-text); font: inherit; font-size: 13px; outline: none; }
+.catalog-search input, .family-select { min-width: 0; height: 36px; border: 1px solid var(--control-border); border-radius: 8px; background: var(--catalog-surface); color: var(--catalog-text); font: inherit; font-size: 14px; outline: none; }
 .catalog-search input { width: 100%; padding: 0 12px 0 36px; }
 .catalog-search input:focus, .family-select:focus { border-color: var(--catalog-accent); box-shadow: 0 0 0 2px var(--catalog-accent-soft); }
 .catalog-search input::placeholder { color: var(--catalog-muted); }
 .family-select { width: 172px; padding: 0 30px 0 12px; }
-.view-switch { display: flex; flex-shrink: 0; gap: 2px; padding: 3px; margin-left: auto; border: 1px solid var(--catalog-border); border-radius: 6px; background: var(--catalog-subtle); }
-.view-button { display: flex; align-items: center; justify-content: center; gap: 6px; border-radius: 4px; padding: 5px 10px; font-size: 13px; color: var(--catalog-muted); }
+.view-switch { display: flex; flex-shrink: 0; gap: 2px; padding: 3px; margin-left: auto; border: 1px solid var(--catalog-border); border-radius: 8px; background: var(--catalog-subtle); }
+.view-button { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 28px; border-radius: 5px; padding: 3px 10px; font-size: 13px; color: var(--catalog-muted); }
 .view-button svg { width: 14px; height: 14px; }
 .view-button.selected { background: var(--catalog-surface); color: var(--catalog-text); box-shadow: 0 1px 2px #0000000d; }
-.catalog-results { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 12px; color: var(--catalog-muted); }
+.catalog-results { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; color: var(--catalog-muted); }
 .catalog-results strong { color: var(--catalog-text); font-weight: 600; font-variant-numeric: tabular-nums; }
 .result-divider { margin: 0 8px; color: var(--catalog-border); }
 .reset-button { margin-left: 12px; color: var(--catalog-accent); }
-.catalog-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border: 1px solid var(--catalog-border); border-radius: 10px; overflow: hidden; background: var(--catalog-surface); }
-.model-card { display: flex; flex-direction: column; min-width: 0; padding: 22px 24px 16px; background: var(--catalog-surface); border-right: 1px solid var(--catalog-border); border-bottom: 1px solid var(--catalog-border); margin-right: -1px; margin-bottom: -1px; transition: background .15s; }
-.model-card:hover { background: var(--catalog-subtle); }
-.model-card-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+/* Each card owns its edge; three columns use (available width - 32px) / 3. */
+.catalog-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: start; gap: 16px; }
+.model-card { display: flex; flex-direction: column; min-width: 0; padding: 16px; background: var(--catalog-surface); border: 1px solid var(--catalog-border); border-radius: 12px; box-shadow: 0 1px 2px #00000005; transition: border-color .15s, box-shadow .15s; }
+.model-card:hover { border-color: var(--control-border); box-shadow: 0 2px 6px #0000000a; }
+.model-card-top { display: flex; align-items: flex-start; gap: 10px; }
+.model-glyph { display: flex; flex: 0 0 32px; align-items: center; justify-content: center; height: 32px; border: 1px solid var(--catalog-border); border-radius: 8px; background: var(--catalog-subtle); color: var(--catalog-muted); }
 .family-badge { display: inline-flex; font-size: 12px; font-weight: 500; line-height: 1.5; color: var(--catalog-muted); }
 .billing-label { font-size: 12px; color: var(--catalog-muted); }
-.model-identity { flex: 1; margin: 16px 0 24px; }
-.model-identity h2 { overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 18px; line-height: 1.55; letter-spacing: -.04em; font-weight: 600; }
-.model-identity > p { margin-top: 7px; font-size: 13px; line-height: 1.6; color: var(--catalog-muted); overflow-wrap: anywhere; }
-.price-columns { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.price-columns > div + div { padding-left: 0; }
-.price-label { font-size: 12px; color: var(--catalog-muted); }
-.price-value { margin-top: 6px; overflow-wrap: anywhere; font-size: 26px; font-weight: 500; line-height: 1.3; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
-.price-value.price-compact { font-size: 18px; line-height: 33.8px; letter-spacing: -.04em; }
-.price-unit { display: flex; align-items: center; flex-wrap: wrap; gap: 5px 8px; margin-top: 10px; font-size: 12px; color: var(--catalog-muted); }
+.model-identity { flex: 1; min-width: 0; }
+.model-identity h2 { overflow-wrap: anywhere; font-family: var(--font-ui); font-size: 15px; line-height: 1.4; font-weight: 600; }
+.model-identity > p { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; margin-top: 4px; font-size: 13px; line-height: 1.5; color: var(--catalog-muted); overflow-wrap: anywhere; }
+.model-identity .family-badge { padding-left: 8px; border-left: 1px solid var(--catalog-border); }
+.price-columns { display: grid; gap: 4px; margin-top: 12px; }
+.price-columns > div { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; min-width: 0; }
+.price-label { flex-shrink: 0; font-size: 13px; color: var(--catalog-muted); }
+.price-value { min-width: 0; margin: 0; overflow-wrap: anywhere; text-align: right; font-family: var(--font-ui); font-size: 20px; font-weight: 600; line-height: 1.4; letter-spacing: 0; font-variant-numeric: tabular-nums; }
+.price-value.price-compact { font-size: 18px; }
+.price-unit { display: flex; align-items: center; flex-wrap: wrap; gap: 4px 8px; margin-top: 8px; font-size: 12px; line-height: 1.5; color: var(--catalog-muted); }
+.billing-label { margin-left: auto; }
 .tier-badge { padding-left: 8px; border-left: 1px solid var(--catalog-border); }
-.model-card-actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 20px; padding-top: 12px; border-top: 1px solid var(--catalog-border); }
-.copy-button, .details-button { color: var(--catalog-accent); padding: 6px 8px; }
-.copy-button { padding: 6px 0; color: var(--catalog-muted); }
-.copy-button:hover { color: var(--catalog-text); }
-.details-button { color: var(--catalog-accent); padding: 6px 3px 6px 8px; }
+.model-card-actions { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--catalog-border); }
+.copy-button, .details-button { display: inline-flex; flex-shrink: 0; align-items: center; justify-content: center; gap: 6px; min-height: 32px; padding: 5px 8px; border-radius: 6px; font-family: var(--font-ui); font-size: 13px; line-height: 20px; white-space: nowrap; transition: color .15s, background-color .15s; }
+.copy-button > :deep(svg) { flex-shrink: 0; width: 14px; height: 14px; }
+.copy-button { color: var(--catalog-text); }
+.copy-button:hover { background: var(--catalog-subtle); }
+.details-button { color: var(--catalog-accent); }
 .details-button:hover { background: var(--catalog-accent-soft); }
 .details-button span { font-size: 15px; margin-left: 2px; }
 .catalog-table-wrap { overflow-x: auto; border: 1px solid var(--catalog-border); border-radius: 12px; background: var(--catalog-surface); }
 .catalog-table { width: 100%; min-width: 880px; text-align: left; font-size: 14px; }
-.catalog-table th { color: var(--catalog-muted); padding: 13px 18px; font-size: 13px; font-weight: 500; white-space: nowrap; }
-.catalog-table td { padding: 16px 18px; border-top: 1px solid var(--catalog-border); }
+.catalog-table th { color: var(--catalog-muted); background: var(--catalog-subtle); padding: 10px 16px; font-size: 13px; font-weight: 500; white-space: nowrap; }
+.catalog-table td { height: 52px; padding: 8px 16px; border-top: 1px solid var(--catalog-border); }
 .catalog-table tbody tr:hover { background: var(--catalog-subtle); }
 .table-identity { max-width: 300px; }
-.table-identity > p { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; overflow-wrap: anywhere; font-weight: 500; line-height: 1.6; margin-bottom: 7px; }
-.table-price { text-align: right; font-weight: 500; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.table-identity > p { display: inline; font-family: var(--font-ui); font-size: 15px; overflow-wrap: anywhere; font-weight: 600; line-height: 1.4; }
+.table-identity .family-badge { margin-left: 8px; white-space: nowrap; }
+.table-price { text-align: right; font-family: var(--font-ui); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .table-unit { color: var(--catalog-muted); font-size: 12px; white-space: nowrap; }
-.table-unit p { margin-top: 5px; }
-.table-actions { display: flex; align-items: center; gap: 12px; }
-.catalog-empty, .catalog-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; min-height: 280px; border: 1px dashed var(--catalog-border); border-radius: 14px; font-size: 13px; color: var(--catalog-muted); }
+.table-unit p { margin-top: 2px; }
+.table-actions { display: flex; align-items: center; gap: 8px; }
+.catalog-empty, .catalog-loading { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; min-height: 180px; border: 1px dashed var(--catalog-border); border-radius: 12px; font-size: 14px; color: var(--catalog-muted); }
 .empty-icon { color: var(--catalog-muted); }
 .catalog-footnote { display: flex; align-items: flex-start; gap: 8px; color: var(--catalog-muted); font-size: 12px; line-height: 1.8; }
 .catalog-footnote > :first-child { flex-shrink: 0; margin-top: 2px; }
 .catalog-footnote span { margin-left: 5px; }
-.catalog-detail { display: flex; flex-direction: column; gap: 20px; }
+.catalog-detail { display: flex; flex-direction: column; gap: 16px; }
 .detail-identity { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; }
 .detail-identity > div { min-width: 0; }
-.detail-model-id { margin-top: 12px; overflow-wrap: anywhere; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 20px; font-weight: 600; line-height: 1.6; letter-spacing: -.025em; }
+.detail-model-id { margin-top: 4px; overflow-wrap: anywhere; font-family: var(--font-ui); font-size: 18px; font-weight: 600; line-height: 1.5; }
 .detail-family-note { margin-top: 5px; font-size: 12px; color: var(--catalog-muted); }
-.detail-note, .detail-time { border: 1px solid var(--catalog-border); border-radius: 10px; padding: 14px 16px; background: var(--catalog-subtle); color: var(--catalog-muted); font-size: 12px; line-height: 1.8; }
+.detail-note, .detail-time { border: 1px solid var(--catalog-border); border-radius: 10px; padding: 12px 14px; background: var(--catalog-subtle); color: var(--catalog-muted); font-size: 13px; line-height: 1.7; }
+.catalog-detail :deep(.font-mono) { font-family: var(--font-ui); font-variant-numeric: tabular-nums; }
 .detail-time strong { color: var(--catalog-text); font-weight: 500; }
 button:focus-visible, input:focus-visible, select:focus-visible, .catalog-table-wrap:focus-visible { outline: 2px solid var(--catalog-accent); outline-offset: 3px; }
 .plaza-description { padding: 18px 20px; border: 1px solid var(--catalog-border); border-radius: 12px; background: var(--catalog-surface); font-size: 13px; line-height: 1.8; overflow-wrap: anywhere; }
@@ -251,7 +258,7 @@ button:focus-visible, input:focus-visible, select:focus-visible, .catalog-table-
 .plaza-description :deep(blockquote) { margin: 8px 0; padding-left: 12px; border-left: 3px solid var(--catalog-border); color: var(--catalog-muted); }
 @media (max-width: 1199px) { .catalog-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .catalog-guide { display: none; } }
 @media (max-width: 639px) {
-  .model-catalog { gap: 18px; }
+  .model-catalog { gap: 16px; }
   .catalog-header { padding: 4px 0 6px; }
   .catalog-controls { padding: 0; }
   .catalog-search { max-width: none; }
@@ -262,10 +269,9 @@ button:focus-visible, input:focus-visible, select:focus-visible, .catalog-table-
   .catalog-toolbar { flex-wrap: wrap; gap: 8px; margin-top: 12px; }
   .catalog-search { flex-basis: 100%; }
   .family-select { flex: 1; min-width: 0; }
-  .catalog-grid { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .model-card { padding: 22px 20px 16px; }
-  .model-identity { margin: 17px 0 18px; }
-  .model-card-actions .copy-button, .model-card-actions .details-button { min-height: 40px; }
+  .catalog-grid { grid-template-columns: minmax(0, 1fr); }
+  .model-card { padding: 16px; }
+  .filter-button, .copy-button, .details-button { min-height: 44px; }
   .catalog-footnote span { display: block; margin-left: 0; }
   .detail-identity { flex-wrap: wrap; }
 }

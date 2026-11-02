@@ -36,7 +36,10 @@ const catalog = (description: string): ModelPlazaResponse => ({
   }],
 })
 const mountView = () => shallowMount(ModelPlazaView, {
-  global: { stubs: { AppLayout: { template: '<div><slot /></div>' } } },
+  global: { stubs: {
+    AppLayout: { template: '<div><slot /></div>' },
+    PageHeading: { template: '<div><slot name="actions" /></div>' },
+  } },
 })
 let wrapper: ReturnType<typeof mountView>
 const content = () => wrapper.findComponent({ name: 'ModelPlazaContent' })

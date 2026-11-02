@@ -1,11 +1,13 @@
 <template>
   <!-- 后台内嵌形态:?embedded=1 且已登录,套完整后台布局 -->
-  <AppLayout v-if="isEmbedded">
-    <div class="mb-3 flex justify-end">
-      <button type="button" class="btn btn-secondary btn-sm" aria-label="刷新模型目录" :disabled="refreshing" @click="refresh">
-        {{ refreshing ? '正在刷新…' : '刷新' }}
-      </button>
-    </div>
+  <AppLayout v-if="isEmbedded" :show-page-heading="false">
+    <PageHeading class="plaza-page-heading">
+      <template #actions>
+        <button type="button" class="btn btn-secondary btn-sm" aria-label="刷新模型目录" :disabled="refreshing" @click="refresh">
+          {{ refreshing ? '正在刷新…' : '刷新' }}
+        </button>
+      </template>
+    </PageHeading>
     <p v-if="refreshFailed" role="status" class="mb-3 text-sm text-amber-700 dark:text-amber-400">刷新失败，当前显示上次加载的模型目录，请稍后重试。</p>
     <ModelPlazaContent :response="data" :loading="loading" :error="loadFailed" embedded />
   </AppLayout>
@@ -29,6 +31,7 @@
 import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import AppLayout from '@/components/layout/AppLayout.vue'
+import PageHeading from '@/components/layout/PageHeading.vue'
 import PlazaNavBar from '@/components/modelPlaza/PlazaNavBar.vue'
 import ModelPlazaContent from '@/components/modelPlaza/ModelPlazaContent.vue'
 import { getModelPlaza, type ModelPlazaResponse } from '@/api/modelPlaza'
@@ -100,4 +103,6 @@ onUnmounted(() => {
 
 <style scoped>
 .plaza-page { background: var(--surface-panel); }
+.plaza-page-heading { flex-direction: row; align-items: center; margin-bottom: 16px; }
+.plaza-page-heading :deep(.page-heading-actions) { width: auto; }
 </style>
