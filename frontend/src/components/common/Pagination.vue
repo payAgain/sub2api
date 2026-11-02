@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex items-center justify-between border-t border-gray-200 bg-white px-4 py-3 dark:border-dark-700 dark:bg-dark-800 sm:px-6"
+    class="pagination-bar flex min-w-0 items-center justify-between border-t border-gray-200 py-4 dark:border-dark-700"
   >
     <div class="flex flex-1 items-center justify-between sm:hidden">
       <!-- Mobile pagination -->
@@ -23,9 +23,9 @@
       </button>
     </div>
 
-    <div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+    <div class="hidden sm:flex sm:min-w-0 sm:flex-1 sm:flex-wrap sm:items-center sm:justify-between sm:gap-4">
       <!-- Desktop pagination info -->
-      <div class="flex items-center space-x-4">
+      <div class="flex min-w-0 flex-wrap items-center gap-4">
         <p class="text-sm text-gray-700 dark:text-gray-300">
           {{ t('pagination.showing') }}
           <span class="font-medium">{{ fromItem }}</span>
@@ -69,7 +69,7 @@
 
       <!-- Desktop pagination buttons -->
       <nav
-        class="relative z-0 inline-flex -space-x-px rounded-md shadow-sm"
+        class="relative z-0 inline-flex -space-x-px rounded-md"
         aria-label="Pagination"
       >
         <!-- Previous button -->
@@ -91,7 +91,7 @@
           :class="[
             'relative inline-flex items-center border px-4 py-2 text-sm font-medium',
             pageNum === page
-              ? 'z-10 border-primary-500 bg-primary-50 text-primary-600 dark:bg-primary-900/30 dark:text-primary-400'
+              ? 'z-10 border-gray-500 bg-gray-100 text-gray-900 dark:border-dark-400 dark:bg-dark-600 dark:text-white'
               : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50 dark:border-dark-600 dark:bg-dark-700 dark:text-gray-300 dark:hover:bg-dark-600',
             typeof pageNum !== 'number' && 'cursor-default'
           ]"
@@ -241,6 +241,8 @@ const submitJump = () => {
 </script>
 
 <style scoped>
+.pagination-bar { background: var(--surface-panel); }
+@media (max-width: 639px) { .pagination-bar button { min-height: 44px; } }
 .page-size-select :deep(.select-trigger) {
   @apply px-3 py-1.5 text-sm;
 }

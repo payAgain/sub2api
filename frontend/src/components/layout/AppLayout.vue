@@ -1,18 +1,19 @@
 <template>
-  <div class="app-shell min-h-screen bg-gray-50 dark:bg-dark-950">
+  <div class="app-shell min-h-screen">
     <!-- Sidebar -->
     <AppSidebar />
 
     <!-- Main Content Area -->
     <div
-      class="relative min-h-screen min-w-0 transition-[margin] duration-300 motion-reduce:transition-none"
-      :class="[sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-64']"
+      class="app-workspace relative min-h-screen min-w-0 transition-[margin] duration-200 motion-reduce:transition-none"
+      :class="[sidebarCollapsed ? 'lg:ml-[72px]' : 'lg:ml-[232px]']"
     >
       <!-- Header -->
       <AppHeader />
 
       <!-- Main Content -->
-      <main class="app-content mx-auto w-full min-w-0 max-w-[1800px] p-4 md:p-6 lg:p-8">
+      <main class="app-content">
+        <PageHeading v-if="showPageHeading" />
         <slot />
       </main>
     </div>
@@ -28,6 +29,9 @@ import { useOnboardingTour } from '@/composables/useOnboardingTour'
 import { useOnboardingStore } from '@/stores/onboarding'
 import AppSidebar from './AppSidebar.vue'
 import AppHeader from './AppHeader.vue'
+import PageHeading from './PageHeading.vue'
+
+withDefaults(defineProps<{ showPageHeading?: boolean }>(), { showPageHeading: true })
 
 const appStore = useAppStore()
 const authStore = useAuthStore()

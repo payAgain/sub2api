@@ -1,6 +1,6 @@
 <template>
   <div class="card p-4">
-    <h3 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">
+    <h3 class="mb-4 text-base font-semibold text-gray-900 dark:text-white">
       {{ t('admin.dashboard.tokenUsageTrend') }}
     </h3>
     <div v-if="loading" class="flex h-48 items-center justify-center">
@@ -60,12 +60,12 @@ const isDarkMode = computed(() => {
 
 const chartColors = computed(() => ({
   text: isDarkMode.value ? '#e5e7eb' : '#374151',
-  grid: isDarkMode.value ? '#374151' : '#e5e7eb',
-  input: '#3b82f6',
-  output: '#10b981',
-  cacheCreation: '#f59e0b',
-  cacheRead: '#06b6d4',
-  cacheHitRate: '#8b5cf6'
+  grid: isDarkMode.value ? '#34383a' : '#edf0f0',
+  input: '#087e8b',
+  output: '#628e94',
+  cacheCreation: '#b39a61',
+  cacheRead: '#79989d',
+  cacheHitRate: '#6d747d'
 }))
 
 const chartData = computed(() => {
@@ -79,32 +79,44 @@ const chartData = computed(() => {
         data: props.trendData.map((d) => d.input_tokens),
         borderColor: chartColors.value.input,
         backgroundColor: `${chartColors.value.input}20`,
-        fill: true,
-        tension: 0.3
+        fill: false,
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHitRadius: 12,
+        tension: 0.15
       },
       {
         label: 'Output',
         data: props.trendData.map((d) => d.output_tokens),
         borderColor: chartColors.value.output,
         backgroundColor: `${chartColors.value.output}20`,
-        fill: true,
-        tension: 0.3
+        fill: false,
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHitRadius: 12,
+        tension: 0.15
       },
       {
         label: 'Cache Creation',
         data: props.trendData.map((d) => d.cache_creation_tokens),
         borderColor: chartColors.value.cacheCreation,
         backgroundColor: `${chartColors.value.cacheCreation}20`,
-        fill: true,
-        tension: 0.3
+        fill: false,
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHitRadius: 12,
+        tension: 0.15
       },
       {
         label: 'Cache Read',
         data: props.trendData.map((d) => d.cache_read_tokens),
         borderColor: chartColors.value.cacheRead,
         backgroundColor: `${chartColors.value.cacheRead}20`,
-        fill: true,
-        tension: 0.3
+        fill: false,
+        borderWidth: 2,
+        pointRadius: 0,
+        pointHitRadius: 12,
+        tension: 0.15
       },
       {
         label: 'Cache Hit Rate',

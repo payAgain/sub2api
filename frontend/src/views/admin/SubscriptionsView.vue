@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AppLayout :show-page-heading="false">
     <TablePageLayout>
       <template #filters>
         <!-- Top Toolbar: Left (search + filters) / Right (actions) -->

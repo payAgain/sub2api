@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AppLayout :show-page-heading="false">
     <TablePageLayout>
       <template #filters>
         <div class="flex flex-wrap items-center gap-3">

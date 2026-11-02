@@ -1,13 +1,13 @@
 <template>
-  <AppLayout>
+  <AppLayout :show-page-heading="false">
     <TablePageLayout>
       <template #filters>
         <div
           class="flex flex-col justify-between gap-4 lg:flex-row lg:items-start"
         >
           <!-- Left: fuzzy search + filters (can wrap to multiple lines) -->
-          <div class="flex flex-1 flex-wrap items-center gap-3">
-            <div class="relative w-full sm:w-64">
+          <div class="grid w-full grid-cols-2 gap-3 sm:flex sm:flex-1 sm:flex-wrap sm:items-center">
+            <div class="relative col-span-2 w-full sm:w-64">
               <Icon
                 name="search"
                 size="md"
@@ -25,14 +25,14 @@
               v-model="filters.platform"
               :options="platformFilterOptions"
               :placeholder="t('admin.groups.allPlatforms')"
-              class="w-44"
+              class="min-w-0 sm:w-44"
               @change="loadGroups"
             />
             <Select
               v-model="filters.status"
               :options="statusOptions"
               :placeholder="t('admin.groups.allStatus')"
-              class="w-40"
+              class="min-w-0 sm:w-40"
               @change="loadGroups"
             />
             <Select
@@ -40,15 +40,13 @@
               v-model="filters.is_exclusive"
               :options="exclusiveOptions"
               :placeholder="t('admin.groups.allGroups')"
-              class="w-44"
+              class="min-w-0 sm:w-44"
               @change="loadGroups"
             />
           </div>
 
-          <!-- Right: actions -->
-          <div
-            class="flex w-full flex-shrink-0 flex-wrap items-center justify-end gap-3 lg:w-auto"
-          >
+          <!-- List actions -->
+          <div class="flex flex-shrink-0 flex-wrap items-center gap-2">
             <button
               @click="loadGroups"
               :disabled="loading"
@@ -139,7 +137,7 @@
           <template #cell-platform="{ value }">
             <span
               :class="[
-                'inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium',
+                'inline-flex items-center gap-1.5 rounded px-2 py-0.5 text-xs font-medium',
                 value === 'anthropic'
                   ? 'bg-orange-100 text-orange-700 dark:bg-orange-900/30 dark:text-orange-400'
                   : value === 'openai'
@@ -171,7 +169,7 @@
               <!-- Type Badge -->
               <span
                 :class="[
-                  'inline-block rounded-full px-2 py-0.5 text-xs font-medium',
+                  'inline-block rounded px-2 py-0.5 text-xs font-medium',
                   row.subscription_type === 'subscription'
                     ? 'bg-violet-100 text-violet-700 dark:bg-violet-900/30 dark:text-violet-400'
                     : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300',

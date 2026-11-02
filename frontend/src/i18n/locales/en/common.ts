@@ -1,4 +1,17 @@
 export default {
+  console: {
+    workspace: 'API workspace',
+    gatewaySubtitle: 'Connect models. Manage every request.',
+    authPurpose: 'Models, keys and usage in one workspace.',
+    authDetail: 'Sign in to access your workspace.',
+    homeExplore: 'Start here',
+    homeModels: 'Models and pricing',
+    homeModelsDetail: 'Browse models by group and review pricing.',
+    homeAccount: 'Open workspace',
+    homeAccountDetail: 'Manage API keys and review requests and usage.',
+    homeDocs: 'Documentation',
+    homeDocsDetail: 'Read the API reference and integration guides.',
+  },
   common: {
     loading: 'Loading...',
     submitting: 'Submitting...',

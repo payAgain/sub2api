@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-6">
     <!-- Date Range Filter -->
-    <div class="card p-4">
+    <div class="workspace-toolbar">
       <div class="flex flex-wrap items-center gap-4">
         <div class="flex items-center gap-2">
           <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ t('dashboard.timeRange') }}:</span>
@@ -20,10 +20,10 @@
     </div>
 
     <!-- Charts Grid -->
-    <div class="grid grid-cols-1 gap-6 lg:grid-cols-2">
+    <div class="grid grid-cols-1 gap-4 2xl:grid-cols-2">
       <!-- Model Distribution Chart -->
       <div class="card relative overflow-hidden p-4">
-        <div v-if="loading" class="absolute inset-0 z-10 flex items-center justify-center bg-white/50 backdrop-blur-sm dark:bg-dark-800/50">
+        <div v-if="loading" class="absolute inset-0 z-10 flex items-center justify-center bg-white/50 dark:bg-dark-800/50">
           <LoadingSpinner size="md" />
         </div>
         <h3 class="mb-4 text-sm font-semibold text-gray-900 dark:text-white">{{ t('dashboard.modelDistribution') }}</h3>
@@ -33,7 +33,7 @@
             <div v-else class="flex h-full items-center justify-center text-sm text-gray-500 dark:text-gray-400">{{ t('dashboard.noDataAvailable') }}</div>
           </div>
           <div class="max-h-48 w-full min-w-0 flex-1 overflow-auto">
-            <table class="w-full text-xs">
+            <table class="w-full text-sm">
               <thead>
                 <tr class="text-gray-500 dark:text-gray-400">
                   <th class="pb-2 text-left">{{ t('dashboard.model') }}</th>
@@ -48,7 +48,7 @@
                   <td class="max-w-[100px] truncate py-1.5 font-medium text-gray-900 dark:text-white" :title="model.model">{{ model.model }}</td>
                   <td class="py-1.5 text-right text-gray-600 dark:text-gray-400">{{ formatNumber(model.requests) }}</td>
                   <td class="py-1.5 text-right text-gray-600 dark:text-gray-400">{{ formatTokens(model.total_tokens) }}</td>
-                  <td class="py-1.5 text-right text-green-600 dark:text-green-400">${{ formatCost(model.actual_cost) }}</td>
+                  <td class="py-1.5 text-right text-gray-900 dark:text-gray-100">${{ formatCost(model.actual_cost) }}</td>
                   <td class="py-1.5 text-right text-gray-400 dark:text-gray-500">${{ formatCost(model.cost) }}</td>
                 </tr>
               </tbody>
@@ -84,11 +84,13 @@ const modelData = computed(() => !props.models?.length ? null : {
   labels: props.models.map((m: ModelStat) => m.model),
   datasets: [{
     data: props.models.map((m: ModelStat) => m.total_tokens),
-    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16']
+    backgroundColor: ['#087e8b', '#74b8be', '#52676b', '#a4bfc2', '#7b8c8e', '#c9d4d5', '#455456', '#96a6a8'],
+    borderWidth: 0
   }]
 })
 
 const doughnutOptions = {
+  cutout: '78%',
   responsive: true,
   maintainAspectRatio: false,
   plugins: {

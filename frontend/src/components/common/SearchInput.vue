@@ -8,6 +8,7 @@
       type="text"
       class="input pl-10"
       :placeholder="placeholder"
+      :aria-label="placeholder"
     />
   </div>
 </template>

@@ -1,4 +1,17 @@
 export default {
+  console: {
+    workspace: 'API 工作台',
+    gatewaySubtitle: '连接模型，管理每一次调用。',
+    authPurpose: '模型、密钥与用量，在一处管理。',
+    authDetail: '登录后进入你的工作空间。',
+    homeExplore: '从这里开始',
+    homeModels: '查看模型与价格',
+    homeModelsDetail: '按分组浏览模型，查询计价规则。',
+    homeAccount: '进入工作台',
+    homeAccountDetail: '管理 API 密钥，查看调用记录与用量。',
+    homeDocs: '接入文档',
+    homeDocsDetail: '查阅接口说明与接入方式。',
+  },
   common: {
     loading: '加载中...',
     submitting: '提交中...',

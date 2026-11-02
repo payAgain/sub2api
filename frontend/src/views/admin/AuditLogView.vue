@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AppLayout :show-page-heading="false">
     <TablePageLayout>
       <!-- Filters -->
       <template #filters>

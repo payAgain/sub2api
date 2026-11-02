@@ -1,16 +1,7 @@
 <template>
-  <AppLayout>
+  <AppLayout :show-page-heading="false">
     <TablePageLayout>
-      <template #filters>
-        <div class="flex flex-wrap-reverse items-start justify-between gap-3">
-          <AccountTableFilters
-            v-model:searchQuery="params.search"
-            :filters="params"
-            :groups="groups"
-            @update:filters="(newFilters) => Object.assign(params, newFilters)"
-            @change="debouncedReload"
-            @update:searchQuery="debouncedReload"
-          />
+      <template #actions>
           <AccountTableActions
             :loading="loading"
             @refresh="handleManualRefresh"
@@ -84,7 +75,7 @@
                   >
                     <div class="overflow-y-auto p-2" :style="{ maxHeight: `${accountToolsDropdownPosition.maxHeight}px` }">
                       <div class="px-2 py-2">
-                        <div class="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
+                        <div class="text-xs font-medium text-gray-400 dark:text-gray-500">
                           {{ t('admin.accounts.dataActions') }}
                         </div>
                       </div>
@@ -117,7 +108,7 @@
 
                       <div class="my-2 border-t border-gray-100 dark:border-dark-700"></div>
                       <div class="px-2 py-2">
-                        <div class="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
+                        <div class="text-xs font-medium text-gray-400 dark:text-gray-500">
                           {{ t('admin.accounts.toolActions') }}
                         </div>
                       </div>
@@ -137,7 +128,7 @@
                       <div class="my-2 border-t border-gray-100 dark:border-dark-700"></div>
                       <div class="px-2 py-2">
                         <div class="flex items-center justify-between gap-3">
-                          <span class="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500">
+                          <span class="text-xs font-medium text-gray-400 dark:text-gray-500">
                             {{ t('admin.accounts.viewColumns') }}
                           </span>
                           <Icon name="grid" size="sm" class="text-gray-400" />
@@ -160,6 +151,18 @@
               </div>
             </template>
           </AccountTableActions>
+      </template>
+      <template #filters>
+        <div class="flex min-w-0 flex-wrap items-start gap-3">
+          <AccountTableFilters
+            v-model:searchQuery="params.search"
+            :filters="params"
+            :groups="groups"
+            @update:filters="(newFilters) => Object.assign(params, newFilters)"
+            @change="debouncedReload"
+            @update:searchQuery="debouncedReload"
+          />
+
         </div>
         <div
           v-if="hasPendingListSync"

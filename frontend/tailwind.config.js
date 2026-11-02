@@ -7,17 +7,17 @@ export default {
       colors: {
         // Cyan accent; darker mid-tones keep white action labels legible.
         primary: {
-          50: '#ecfeff',
-          100: '#cffafe',
-          200: '#a5f3fc',
-          300: '#67e8f9',
-          400: '#22d3ee',
-          500: '#0891b2',
-          600: '#0e7490',
-          700: '#155e75',
-          800: '#164e63',
-          900: '#153e50',
-          950: '#082f3c'
+          50: '#edf8f8',
+          100: '#d7eeee',
+          200: '#addde0',
+          300: '#8bd9df',
+          400: '#66ced5',
+          500: '#118a98',
+          600: '#087e8b',
+          700: '#17636b',
+          800: '#1c5157',
+          900: '#1b4247',
+          950: '#122e32'
         },
         // 辅助色 - 深蓝灰
         accent: {
@@ -40,26 +40,25 @@ export default {
           200: '#e4e4e7',
           300: '#d4d4d8',
           400: '#a1a1aa',
-          500: '#85858f',
-          600: '#52525b',
-          700: '#36363f',
-          800: '#232329',
-          900: '#19191e',
-          950: '#111114'
+          500: '#97a1a3',
+          600: '#565e60',
+          700: '#34383a',
+          800: '#232628',
+          900: '#1b1d1f',
+          950: '#141617'
         }
       },
       fontFamily: {
         sans: [
-          'system-ui',
           '-apple-system',
           'BlinkMacSystemFont',
+          'PingFang SC',
+          'Microsoft YaHei',
           'Segoe UI',
           'Roboto',
           'Helvetica Neue',
           'Arial',
-          'PingFang SC',
           'Hiragino Sans GB',
-          'Microsoft YaHei',
           'sans-serif'
         ],
         mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace']
@@ -75,8 +74,8 @@ export default {
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-primary': 'linear-gradient(135deg, #0891b2 0%, #0e7490 100%)',
-        'gradient-dark': 'linear-gradient(135deg, #232329 0%, #19191e 100%)',
+        'gradient-primary': 'linear-gradient(135deg, #118a98 0%, #087e8b 100%)',
+        'gradient-dark': 'linear-gradient(135deg, #232628 0%, #1b1d1f 100%)',
         'gradient-glass':
           'linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%)',
         'mesh-gradient':

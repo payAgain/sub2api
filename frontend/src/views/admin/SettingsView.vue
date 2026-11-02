@@ -1,6 +1,6 @@
 <template>
   <AppLayout>
-    <div class="mx-auto max-w-6xl space-y-6">
+    <div class="settings-page mx-auto max-w-7xl space-y-6">
       <!-- Loading State -->
       <div v-if="loading" class="flex items-center justify-center py-12">
         <div
@@ -9,7 +9,7 @@
       </div>
 
       <!-- Settings Form -->
-      <form v-else @submit.prevent="saveSettings" class="space-y-6" novalidate>
+      <form v-else @submit.prevent="saveSettings" class="settings-form space-y-6" novalidate>
         <!-- Tab Navigation -->
         <div class="settings-tabs-shell">
           <nav
@@ -164,7 +164,7 @@
         <!-- Tab: Gateway -->
         <div v-show="activeTab === 'gateway'" class="space-y-6">
           <!-- Overload Cooldown (529) Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -265,7 +265,7 @@
           </div>
 
           <!-- Rate Limit Cooldown (429) Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -372,7 +372,7 @@
           </div>
 
           <!-- Stream Timeout Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -552,7 +552,7 @@
           </div>
 
           <!-- Request Rectifier Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -751,7 +751,7 @@
             </div>
           </div>
           <!-- Beta Policy Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -1030,7 +1030,7 @@
             </div>
           </div>
           <!-- OpenAI Fast/Flex Policy Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -1384,7 +1384,7 @@
         <!-- Tab: Security — Registration, Turnstile, LinuxDo -->
         <div v-show="activeTab === 'security'" class="space-y-6">
           <!-- Registration Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -1716,7 +1716,7 @@
           </div>
 
           <!-- API Key IP ACL Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -1803,7 +1803,7 @@
           </div>
 
           <!-- Panel API Rate Limit Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -1994,7 +1994,7 @@
           </div>
 
           <!-- 人机验证 Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -2398,7 +2398,7 @@
           </div>
 
           <!-- LinuxDo Connect OAuth 登录 -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -2516,7 +2516,7 @@
           </div>
 
           <!-- GitHub / Google 邮箱快捷登录 -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -2742,7 +2742,7 @@
           </div>
 
           <!-- WeChat Connect OAuth 登录 -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -3084,7 +3084,7 @@
           </div>
 
           <!-- DingTalk Connect OAuth 登录 -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -3372,7 +3372,7 @@
           </div>
 
           <!-- Generic OIDC OAuth 登录 -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -3785,7 +3785,7 @@
         <!-- Tab: Users -->
         <div v-show="activeTab === 'users'" class="space-y-6">
           <!-- Default Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -4058,7 +4058,7 @@
             </div>
           </div>
 
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -4401,7 +4401,7 @@
         <!-- Tab: Gateway — Claude Code, Scheduling -->
         <div v-show="activeTab === 'gateway'" class="space-y-6">
           <!-- Claude Code Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -4453,7 +4453,7 @@
           </div>
 
           <!-- Codex Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -4701,7 +4701,7 @@
           </div>
 
           <!-- Upstream Billing Probe Settings -->
-          <div class="card" data-testid="upstream-billing-probe-settings">
+          <div class="card settings-section" data-testid="upstream-billing-probe-settings">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -4787,7 +4787,7 @@
           </div>
 
           <!-- Ollama Cloud Usage Settings -->
-          <div class="card" data-testid="ollama-cloud-usage-global-settings">
+          <div class="card settings-section" data-testid="ollama-cloud-usage-global-settings">
             <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
               <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ t("admin.settings.ollamaCloudUsage.title") }}
@@ -4871,7 +4871,7 @@
           </div>
 
           <!-- OpenCode Go Usage Settings -->
-          <div class="card" data-testid="opencode-go-usage-global-settings">
+          <div class="card settings-section" data-testid="opencode-go-usage-global-settings">
             <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
               <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
                 {{ t("admin.settings.opencodeGoUsage.title") }}
@@ -4955,7 +4955,7 @@
           </div>
 
           <!-- Gateway Scheduling Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -5234,7 +5234,7 @@
           </div>
 
           <!-- Gateway Forwarding Behavior -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -5878,7 +5878,7 @@
           </div>
 
           <!-- Web Search Emulation -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -6314,7 +6314,7 @@
           </div>
 
         <!-- Usage Records Settings -->
-        <div class="card">
+        <div class="card settings-section">
           <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
               {{ t('admin.settings.usageRecords.title') }}
@@ -6347,7 +6347,7 @@
         <!-- Tab: General -->
         <div v-show="activeTab === 'general'" class="space-y-6">
           <!-- Site Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -6714,7 +6714,7 @@
           </div>
 
           <!-- Custom Menu Items -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -6919,7 +6919,7 @@
 
 	        <!-- Tab: Login Agreement -->
 	        <div v-show="activeTab === 'agreement'" class="space-y-6">
-	          <div class="card">
+	          <div class="card settings-section">
 	            <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
 	              <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
 	                <div>
@@ -7122,7 +7122,7 @@
 	        <!-- Tab: Features (功能开关) -->
         <div v-show="activeTab === 'features'" class="space-y-6">
 
-        <div class="card">
+        <div class="card settings-section">
           <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
               {{ t('admin.settings.features.channelMonitor.title') }}
@@ -7253,7 +7253,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card settings-section">
           <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
               {{ t('admin.settings.features.availableChannels.title') }}
@@ -7286,7 +7286,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card settings-section">
           <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
               {{ t('admin.settings.features.modelPlaza.title') }}
@@ -7336,7 +7336,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card settings-section">
           <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
               {{ t('admin.settings.features.siteBillingMode.title') }}
@@ -7366,7 +7366,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card settings-section">
           <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
               {{ t('admin.settings.features.pluginManagement.title') }}
@@ -7390,7 +7390,7 @@
           </div>
         </div>
 
-        <div class="card">
+        <div class="card settings-section">
           <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
               {{ t('admin.settings.features.riskControl.title') }}
@@ -7461,7 +7461,7 @@
         </div>
 
         <!-- Affiliate (邀请返利) feature card -->
-        <div class="card">
+        <div class="card settings-section">
           <div class="border-b border-gray-100 px-6 py-4 dark:border-dark-700">
             <h2 class="text-lg font-semibold text-gray-900 dark:text-white">
               {{ t('admin.settings.features.affiliate.title') }}
@@ -7878,7 +7878,7 @@
         <!-- Tab: Payment -->
         <div v-show="activeTab === 'payment'" class="space-y-6">
           <!-- Payment System Settings -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -8688,7 +8688,7 @@
           </div>
 
           <!-- 订阅到期提醒 -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -8719,7 +8719,7 @@
           <EmailTemplateEditor />
 
           <!-- Balance Low Notification -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -8779,7 +8779,7 @@
           </div>
 
           <!-- Account Quota Notification -->
-          <div class="card">
+          <div class="card settings-section">
             <div
               class="border-b border-gray-100 px-6 py-4 dark:border-dark-700"
             >
@@ -8862,7 +8862,7 @@
         </div>
 
         <!-- Save Button -->
-        <div v-show="activeTab !== 'backup'" class="flex justify-end">
+        <div v-show="activeTab !== 'backup'" class="settings-save-bar flex justify-end">
           <button
             type="submit"
             :disabled="saving || loadFailed"
@@ -13266,129 +13266,34 @@ watch(
 </script>
 
 <style scoped>
-.default-sub-group-select :deep(.select-trigger) {
-  @apply h-[42px];
+.default-sub-group-select :deep(.select-trigger), .default-sub-delete-btn { min-height: 42px; }
+.settings-page { min-width: 0; }
+.settings-tabs-shell { position: sticky; top: 56px; z-index: 20; padding-top: 8px; background: var(--surface-panel); border-bottom: 1px solid var(--surface-border); }
+.settings-tabs-scroll { overflow-x: auto; scrollbar-width: thin; }
+.settings-tabs { display: flex; width: max-content; min-width: 100%; gap: 20px; }
+.settings-tab { position: relative; display: flex; align-items: center; justify-content: center; gap: 7px; min-height: 48px; padding: 10px 0; white-space: nowrap; font-size: 14px; font-weight: 500; color: var(--text-muted); border-bottom: 2px solid transparent; transition: color 120ms ease; }
+.settings-tab:hover { color: var(--text-primary); }
+.settings-tab-active { color: var(--text-primary); border-bottom-color: var(--focus-color); }
+.settings-tab:focus-visible { outline: 2px solid var(--focus-color); outline-offset: -3px; border-radius: 4px; }
+.settings-tab-icon { display: inline-flex; align-items: center; color: var(--text-muted); }
+.settings-tab-active .settings-tab-icon { color: var(--focus-color); }
+.settings-tab-label { white-space: nowrap; line-height: 1.4; }
+.settings-form > div > .settings-section { border: 0; border-radius: 0; border-bottom: 1px solid var(--surface-border); padding-bottom: 28px; background: transparent; }
+.settings-form > div > .settings-section > div:first-child { padding: 8px 0 20px; border: 0; }
+.settings-form > div > .settings-section > div:first-child h2 { font-size: 16px; }
+.settings-form > div > .settings-section > div:first-child p { font-size: 13px; line-height: 1.8; }
+.settings-form > div > .settings-section > div:not(:first-child) { min-width: 0; padding: 20px; background: var(--surface-subtle); border-radius: 10px; }
+.settings-save-bar { position: sticky; bottom: 0; z-index: 15; padding: 16px 0; border-top: 1px solid var(--surface-border); background: var(--surface-panel); }
+@media (min-width: 1280px) {
+  .settings-form > div > .settings-section { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: 0 32px; }
+  .settings-form > div > .settings-section > div:first-child { grid-column: 1; grid-row: 1 / span 10; position: sticky; top: 128px; align-self: start; }
+  .settings-form > div > .settings-section > div:not(:first-child) { grid-column: 2; }
 }
-
-.default-sub-delete-btn {
-  @apply h-[42px];
-}
-
-/* ============ 系统设置 Tab 导航 ============ */
-.settings-tabs-shell {
-  @apply sticky z-20 -mx-1 rounded-2xl border border-white/80 bg-white/90 p-1.5 backdrop-blur-xl;
-  top: 4.75rem;
-  box-shadow:
-    0 12px 28px rgb(15 23 42 / 0.07),
-    0 1px 0 rgb(255 255 255 / 0.9) inset;
-}
-
-.settings-tabs-scroll {
-  @apply overflow-x-auto;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-.settings-tabs-scroll::-webkit-scrollbar {
-  display: none;
-}
-
-.settings-tabs {
-  @apply flex min-w-max items-center gap-1;
-}
-
-.settings-tab {
-  @apply relative isolate flex h-10 min-w-[6.75rem] shrink-0 items-center justify-center gap-1.5 whitespace-nowrap rounded-xl border border-transparent px-3 text-sm font-medium text-gray-600 outline-none transition-colors duration-200 ease-out dark:text-gray-300;
-}
-
-@media (min-width: 768px) {
-  .settings-tabs {
-    @apply min-w-full;
-  }
-
-  .settings-tab {
-    @apply min-w-0 flex-1 basis-0 overflow-hidden px-2 text-[13px];
-  }
-
-  .settings-tab-icon {
-    @apply h-6 w-6;
-  }
-}
-
-.settings-tab::before {
-  @apply absolute inset-0 -z-10 rounded-xl opacity-0 transition-opacity duration-200;
-  content: "";
-  background: linear-gradient(135deg, rgb(248 250 252 / 0.95), rgb(241 245 249 / 0.8));
-}
-
-.settings-tab:hover::before,
-.settings-tab:focus-visible::before {
-  opacity: 1;
-}
-
-.settings-tab:focus-visible {
-  @apply ring-2 ring-primary-500/40 ring-offset-2 ring-offset-white dark:ring-offset-dark-900;
-}
-
-.settings-tab-active {
-  @apply border-primary-200/80 bg-white text-primary-700 shadow-sm dark:border-primary-400/30 dark:bg-dark-700/95 dark:text-primary-200;
-  box-shadow:
-    0 8px 18px rgb(15 23 42 / 0.08),
-    0 1px 0 rgb(255 255 255 / 0.92) inset;
-}
-
-.settings-tab-active::before {
-  opacity: 0;
-}
-
-.settings-tab-active::after {
-  position: absolute;
-  right: 0.75rem;
-  bottom: 0.25rem;
-  left: 0.75rem;
-  height: 2px;
-  border-radius: 9999px;
-  content: "";
-  background: linear-gradient(90deg, #14b8a6, #0ea5e9);
-}
-
-.settings-tab-icon {
-  @apply flex h-7 w-7 shrink-0 items-center justify-center rounded-lg text-gray-500 transition-colors duration-200 dark:text-gray-400;
-}
-
-.settings-tab:hover .settings-tab-icon,
-.settings-tab:focus-visible .settings-tab-icon {
-  @apply text-gray-700 dark:text-gray-200;
-}
-
-.settings-tab-active .settings-tab-icon {
-  @apply bg-primary-50 text-primary-600 dark:bg-primary-400/10 dark:text-primary-300;
-}
-
-.settings-tab-label {
-  @apply min-w-0 overflow-hidden text-ellipsis whitespace-nowrap leading-none;
-}
-</style>
-
-<style>
-/* Dark-mode overrides for the settings tabs shell. Kept in an UNSCOPED block
-   because Vue's scoped-CSS compiler was dropping the `:global(.dark) ...`
-   rules in the production build, leaving inactive tabs unreadable on dark. */
-.dark .settings-tabs-shell {
-  border-color: rgb(51 65 85 / 0.65);
-  background: rgb(15 23 42 / 0.86);
-  box-shadow:
-    0 16px 36px rgb(0 0 0 / 0.28),
-    0 1px 0 rgb(255 255 255 / 0.06) inset;
-}
-
-.dark .settings-tab::before {
-  background: linear-gradient(135deg, rgb(30 41 59 / 0.9), rgb(51 65 85 / 0.62));
-}
-
-.dark .settings-tab-active {
-  box-shadow:
-    0 12px 26px rgb(0 0 0 / 0.22),
-    0 1px 0 rgb(255 255 255 / 0.08) inset;
+@media (max-width: 639px) {
+  .settings-tabs-shell { top: 56px; }
+  .settings-tabs { gap: 20px; }
+  .settings-form > div > .settings-section > div:not(:first-child) { padding: 16px; }
+  .settings-form > div > .settings-section :deep(.flex.items-center.justify-between) { gap: 16px; }
+  .settings-save-bar .btn { width: 100%; }
 }
 </style>

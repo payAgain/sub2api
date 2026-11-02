@@ -1,10 +1,7 @@
 <template>
   <div class="stat-card">
-    <div :class="['stat-icon', iconClass]">
-      <component v-if="icon" :is="icon" class="h-6 w-6" aria-hidden="true" />
-    </div>
     <div class="min-w-0 flex-1">
-      <p class="stat-label truncate">{{ title }}</p>
+      <p class="stat-label flex items-center justify-between gap-3">{{ title }}<component v-if="icon" :is="icon" class="h-4 w-4 shrink-0 text-gray-400" aria-hidden="true" /></p>
       <div class="mt-1 flex items-baseline gap-2">
         <p class="stat-value" :title="String(formattedValue)">{{ formattedValue }}</p>
         <span v-if="change !== undefined" :class="['stat-trend', trendClass]">
@@ -58,16 +55,6 @@ const formattedChange = computed(() => {
   if (props.change === undefined) return ''
   const absChange = Math.abs(props.change)
   return `${absChange}%`
-})
-
-const iconClass = computed(() => {
-  const classes: Record<IconVariant, string> = {
-    primary: 'stat-icon-primary',
-    success: 'stat-icon-success',
-    warning: 'stat-icon-warning',
-    danger: 'stat-icon-danger'
-  }
-  return classes[props.iconVariant]
 })
 
 const trendClass = computed(() => {

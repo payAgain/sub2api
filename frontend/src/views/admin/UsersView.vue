@@ -1,5 +1,5 @@
 <template>
-  <AppLayout>
+  <AppLayout :show-page-heading="false">
     <TablePageLayout>
       <!-- Single Row: Search, Filters, and Actions -->
       <template #filters>
