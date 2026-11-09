@@ -117,8 +117,8 @@ func (s *ModelPlazaService) ListGroups(ctx context.Context) ([]PlazaGroup, error
 	}
 
 	sort.SliceStable(channels, func(i, j int) bool {
-		if strings.ToLower(channels[i].Name) != strings.ToLower(channels[j].Name) {
-			return strings.ToLower(channels[i].Name) < strings.ToLower(channels[j].Name)
+		if order := strings.Compare(strings.ToLower(channels[i].Name), strings.ToLower(channels[j].Name)); order != 0 {
+			return order < 0
 		}
 		return channels[i].ID < channels[j].ID
 	})
