@@ -5,7 +5,7 @@ Fork： https://github.com/payAgain/sub2api
 
 ## 版本策略
 
-当前定制基线为 v0.2.19，使用 custom/model-plaza 分支，避免前端改造夹带 main 中未发布的后端和数据库迁移。按功能分批本地提交；用户明确授权后再推送远端。线上配置、账号、密钥和数据库不提交到代码仓库。
+当前定制基线为正式稳定版 v0.2.20（上游提交 dab829a4e9b7d1cc307189aea8b0319eb29e29d0），升级分支 upgrade/sub2api-v0.2.20-yiming.1，镜像版本 0.2.20-yiming.1。从已部署的 design/newapi-console（22ee014ea）合并正式标签，保留模型广场账号来源、四组分类、价格详情、刷新行为与 New API 风格控制台，不夹带 main 未发布修改。线上配置、账号、密钥和数据库不提交到代码仓库。
 
 ## 部署原则
 
